@@ -1,0 +1,1301 @@
+<html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>VOVOFIXIT - Expert Appliance Repair | Austin, TX</title>
+
+  <!-- ─── PWA META TAGS ─── -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#4FC3F7">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="VovôFixIt">
+  <link rel="apple-touch-icon" href="VovoFixItAgent.png">
+  <meta name="description" content="Expert appliance repair in South Austin. Book your diagnostic visit online — GE, Whirlpool, Kenmore, Frigidaire, Maytag, Jenn-Air, Monogram, Café, Trane, Carrier, Lennox &amp; Goodman.">
+  <!-- ─── END PWA META TAGS ─── -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script type="text/javascript">
+    emailjs.init({ publicKey: "ox0IH8nxNPZavmXK1" });
+  </script>
+  <style>
+    /* ─── GOOGLE FONT ─── */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+    /* ─── DESIGN TOKENS — DARK MODE (default) ─── */
+    :root {
+      --cyan:        #00D4FF;
+      --orange:      #FF6B35;
+      --orange-dim:  #CC5228;
+      --accent:      #FF6B35;
+      --green:       #00E676;
+
+      --bg:          #0A0E1A;
+      --bg2:         #0F1422;
+      --bg3:         #151B2E;
+      --surface:     #1A2035;
+      --surface2:    #212840;
+      --border:      rgba(0,212,255,0.18);
+      --border2:     rgba(0,212,255,0.08);
+
+      --text:        #E8EAF0;
+      --text-dim:    #8892A4;
+      --text-muted:  #555F72;
+
+      --glow-cyan:   0 0 30px rgba(0,212,255,0.25);
+      --glow-orange: 0 0 30px rgba(255,107,53,0.3);
+    }
+
+    /* ─── LIGHT MODE OVERRIDES ─── */
+    body.light-mode {
+      --bg:          #F0F4FF;
+      --bg2:         #E8EEFF;
+      --bg3:         #FFFFFF;
+      --surface:     #FFFFFF;
+      --surface2:    #F5F7FF;
+      --border:      rgba(0,100,200,0.2);
+      --border2:     rgba(0,100,200,0.1);
+      --text:        #0D1117;
+      --text-dim:    #3D4A5C;
+      --text-muted:  #7A8898;
+      --glow-cyan:   0 4px 20px rgba(0,100,255,0.12);
+      --glow-orange: 0 4px 20px rgba(255,107,53,0.15);
+    }
+
+    /* ─── RESET ─── */
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      transition: background 0.35s ease, color 0.35s ease;
+      overflow-x: hidden;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    /* ─── HEADER ─── */
+    header {
+      position: sticky; top: 0; z-index: 200;
+      background: rgba(10,14,26,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0;
+      transition: background 0.35s ease;
+    }
+    body.light-mode header {
+      background: rgba(240,244,255,0.88);
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .header-left {
+      display: flex; align-items: center; gap: 12px;
+    }
+    /* ─── FIX: .header-brand selector was missing in previous version ─── */
+    .header-brand {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.2em;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--cyan), var(--orange));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+    }
+
+    /* ─── DARK/LIGHT TOGGLE ─── */
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 6px 14px;
+      transition: all 0.3s ease;
+      user-select: none;
+    }
+    .theme-toggle:hover {
+      border-color: var(--cyan);
+      box-shadow: var(--glow-cyan);
+    }
+    .theme-toggle .icon { font-size: 1em; transition: transform 0.4s ease; }
+    .theme-toggle .label {
+      font-size: 0.78em;
+      font-weight: 600;
+      color: var(--text-dim);
+      letter-spacing: 0.5px;
+    }
+    .toggle-track {
+      width: 36px; height: 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      position: relative;
+      transition: background 0.3s ease;
+    }
+    body.light-mode .toggle-track { background: var(--cyan); }
+    .toggle-thumb {
+      width: 14px; height: 14px;
+      background: var(--text-dim);
+      border-radius: 50%;
+      position: absolute;
+      top: 2px; left: 2px;
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+    body.light-mode .toggle-thumb {
+      transform: translateX(16px);
+      background: #fff;
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      position: relative;
+      padding: 100px 0 80px;
+      text-align: center;
+      overflow: hidden;
+      background: var(--bg);
+    }
+    /* animated grid lines */
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(var(--border2) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border2) 1px, transparent 1px);
+      background-size: 60px 60px;
+      opacity: 0.6;
+    }
+    /* cyan radial glow centre */
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: -100px; left: 50%; transform: translateX(-50%);
+      width: 800px; height: 500px;
+      background: radial-gradient(ellipse at center, rgba(0,212,255,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-content { position: relative; z-index: 1; }
+    .hero-header {
+      display: flex; align-items: center; justify-content: center;
+      gap: 30px; margin-bottom: 24px; flex-wrap: wrap;
+    }
+    .hero h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.2em, 5vw, 3.8em);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #fff 0%, var(--cyan) 50%, var(--orange) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    body.light-mode .hero h1 {
+      background: linear-gradient(135deg, #0D1117 0%, #0070CC 50%, var(--orange) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: clamp(0.95em, 2vw, 1.15em);
+      color: var(--text-dim);
+      max-width: 720px;
+      margin: 0 auto 16px;
+    }
+    .neighborhoods {
+      display: flex; justify-content: center;
+      gap: 10px; flex-wrap: wrap; margin-top: 28px;
+    }
+    .neighborhood-tag {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 6px 16px;
+      border-radius: 50px;
+      font-size: 0.82em;
+      color: var(--cyan);
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      transition: all 0.25s ease;
+    }
+    .neighborhood-tag:hover {
+      background: rgba(0,212,255,0.08);
+      border-color: var(--cyan);
+      box-shadow: var(--glow-cyan);
+    }
+
+    /* ─── SECTIONS ─── */
+    .section { padding: 80px 0; position: relative; background: var(--bg2); }
+    .section:nth-child(odd) { background: var(--bg); }
+    .section.with-background {
+      background-image: url('Appliances picture 4.png');
+      background-size: cover; background-position: center;
+      background-attachment: fixed;
+    }
+    .section.with-background::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(10,14,26,0.88), rgba(15,20,34,0.82));
+      z-index: 1;
+    }
+    body.light-mode .section.with-background::before {
+      background: linear-gradient(135deg, rgba(240,244,255,0.88), rgba(232,238,255,0.84));
+    }
+    .section.with-background .container { position: relative; z-index: 2; }
+
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.6em, 3.5vw, 2.4em);
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 48px;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, var(--cyan), var(--orange));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ─── BRAND CARDS ─── */
+    .brands {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 16px; margin-top: 32px;
+    }
+    .brand-card {
+      background: #dadada;
+      border: 1px solid var(--border);
+      padding: 24px 16px;
+      text-align: center;
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 110px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    body.light-mode .brand-card { background: rgba(255,255,255,1); }
+    .brand-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(0,212,255,0.04), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .brand-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--cyan);
+      box-shadow: var(--glow-cyan);
+    }
+    .brand-card:hover::before { opacity: 1; }
+    .brand-card img {
+      max-width: 100%; max-height: 55px;
+      object-fit: contain;
+      filter: brightness(0.85) saturate(0.9);
+      transition: filter 0.3s ease;
+    }
+    body.light-mode .brand-card img { filter: none; }
+    .brand-card:hover img { filter: brightness(1) saturate(1.1); }
+
+    /* ─── FORM ─── */
+    .form-section {
+      background: rgba(26,32,53,0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 24px;
+      padding: 48px;
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4), var(--glow-cyan);
+      position: relative;
+      overflow: hidden;
+    }
+    body.light-mode .form-section {
+      background: rgba(255,255,255,0.65);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    .form-section::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--cyan), var(--orange), var(--cyan));
+      background-size: 200% 100%;
+      animation: shimmer 3s linear infinite;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .form-group { margin-bottom: 22px; }
+    label {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--cyan);
+      font-weight: 600;
+      font-size: 0.88em;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 0.97em;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.25s ease;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px rgba(0,212,255,0.12);
+      background: var(--surface2);
+    }
+    select option { background: var(--surface); color: var(--text); }
+    textarea { min-height: 120px; resize: vertical; }
+
+    .info-box {
+      background: rgba(255,107,53,0.08);
+      border-left: 3px solid var(--orange);
+      padding: 12px 16px;
+      margin-top: 10px;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.85em;
+      color: var(--text-dim);
+    }
+
+    /* ─── CALENDLY CONFIRMED ─── */
+    .calendly-confirmed-box {
+      background: rgba(0,230,118,0.08);
+      border-left: 3px solid var(--green);
+      padding: 14px 16px;
+      margin-bottom: 14px;
+      border-radius: 0 10px 10px 0;
+      font-size: 0.92em;
+      color: var(--green);
+      display: none;
+      align-items: center;
+      gap: 10px;
+    }
+    .calendly-confirmed-box.visible { display: flex; }
+    .calendly-confirmed-box .check-icon { font-size: 1.3em; flex-shrink: 0; }
+    .calendly-wrapper {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: var(--glow-cyan);
+    }
+
+    /* ─── COST INFO ─── */
+    .cost-info {
+      background: linear-gradient(135deg, rgba(255,107,53,0.1), rgba(255,107,53,0.06));
+      border: 1px solid rgba(255,107,53,0.3);
+      padding: 22px;
+      border-radius: 14px;
+      margin: 28px 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cost-info::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--orange), transparent);
+    }
+    .cost-info h3 { color: var(--orange); font-size: 1.4em; margin-bottom: 8px; font-family: 'Space Grotesk', sans-serif; }
+    .cost-info p { color: var(--text-dim); font-size: 0.92em; }
+
+    /* ─── SUBMIT BUTTON ─── */
+    .submit-btn {
+      background: linear-gradient(135deg, var(--cyan), var(--orange));
+      color: #fff;
+      padding: 16px 40px;
+      border: none;
+      border-radius: 50px;
+      font-size: 1em;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.3s ease;
+      letter-spacing: 0.3px;
+      position: relative;
+      overflow: hidden;
+    }
+    .submit-btn::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .submit-btn:hover::before { opacity: 1; }
+    .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 35px rgba(0,212,255,0.35); }
+    .submit-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    /* ─── CHATBOT ─── */
+    .assistant-widget {
+      position: fixed; bottom: 50px; right: 28px; z-index: 10000;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+    }
+    .assistant-toggle {
+      width: 68px; height: 68px;
+      background: linear-gradient(135deg, #1A2035, #212840);
+      border: 2px solid var(--cyan);
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: var(--glow-cyan);
+      transition: all 0.3s ease;
+    }
+    .assistant-toggle:hover { transform: scale(1.08); box-shadow: 0 0 40px rgba(0,212,255,0.5); }
+    .assistant-toggle img {
+      width: 80%; height: 80%;
+      border-radius: 50%; object-fit: cover;
+      animation: subtleFloat 2.5s ease-in-out infinite;
+    }
+    @keyframes subtleFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+    .assistant-label {
+      font-size: 0.75em;
+      color: var(--cyan);
+      font-weight: 600;
+      text-align: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 20px;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+      box-shadow: var(--glow-cyan);
+    }
+    .assistant-chat {
+      position: fixed; bottom: 120px; right: 28px;
+      width: 350px; height: 500px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      display: none;
+      flex-direction: column;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5), var(--glow-cyan);
+    }
+    .assistant-chat.active { display: flex; }
+    .chat-header {
+      background: linear-gradient(135deg, var(--cyan), var(--orange));
+      color: #fff; padding: 18px 20px;
+      border-radius: 18px 18px 0 0;
+      font-weight: 700;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95em;
+    }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 14px; background: var(--bg2); }
+    .message { margin-bottom: 10px; padding: 10px 14px; border-radius: 12px; max-width: 82%; font-size: 0.9em; }
+    .message.bot {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 4px 12px 12px 12px;
+    }
+    .message.user {
+      background: linear-gradient(135deg, rgba(0,212,255,0.15), rgba(255,107,53,0.1));
+      border: 1px solid rgba(0,212,255,0.2);
+      color: var(--text);
+      margin-left: auto;
+      border-radius: 12px 4px 12px 12px;
+    }
+    .chat-input-area {
+      padding: 12px;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 0 0 18px 18px;
+    }
+    .chat-input {
+      width: 100%; padding: 10px 16px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      color: var(--text);
+      font-size: 0.88em;
+      font-family: 'Inter', sans-serif;
+    }
+    .chat-input:focus { outline: none; border-color: var(--cyan); }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--bg2);
+      text-align: center;
+      padding: 32px 0;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.88em;
+    }
+
+    /* ─── STICKY SUBMIT REMINDER ─── */
+    #submit-reminder {
+      display: none;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(135deg, #00C853, #00E676);
+      color: #003300;
+      padding: 14px 24px;
+      z-index: 9999;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: 0 -4px 30px rgba(0,230,118,0.3);
+    }
+    #submit-reminder.show { display: flex; }
+    #submit-reminder p { margin: 0; font-size: 0.95em; font-weight: 700; flex: 1; }
+    #submit-reminder button {
+      background: rgba(0,0,0,0.15); color: #003300; border: 2px solid rgba(0,0,0,0.2);
+      padding: 8px 20px; border-radius: 50px;
+      font-weight: 700; font-size: 0.88em; cursor: pointer;
+      white-space: nowrap; flex-shrink: 0; transition: all 0.2s;
+    }
+    #submit-reminder button:hover { background: rgba(0,0,0,0.25); }
+
+    /* ─── PWA INSTALL BANNER ─── */
+    #pwa-install-banner {
+      display: none;
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(135deg, var(--cyan), var(--orange));
+      color: #fff; padding: 14px 20px;
+      z-index: 99999;
+      align-items: center; justify-content: space-between; gap: 12px;
+      box-shadow: 0 -4px 20px rgba(0,212,255,0.2);
+    }
+    #pwa-install-banner.show { display: flex; }
+    #pwa-install-banner p { font-size: 0.88em; font-weight: 600; flex: 1; margin: 0; }
+    #pwa-install-banner .banner-btns { display: flex; gap: 8px; flex-shrink: 0; }
+    #pwa-install-btn {
+      background: rgba(255,255,255,0.9); color: var(--orange); border: none;
+      padding: 8px 18px; border-radius: 50px; font-weight: 700; font-size: 0.83em; cursor: pointer;
+    }
+    #pwa-dismiss-btn {
+      background: transparent; color: #fff;
+      border: 1px solid rgba(255,255,255,0.5);
+      padding: 8px 14px; border-radius: 50px; font-size: 0.83em; cursor: pointer;
+    }
+
+    /* ─── OFFLINE NOTICE ─── */
+    #offline-notice {
+      display: none;
+      background: var(--orange); color: #fff;
+      text-align: center; padding: 10px;
+      font-size: 0.88em; font-weight: 600;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 99998;
+    }
+    #offline-notice.show { display: block; }
+    body.offline-mode { padding-top: 40px; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      .hero { padding: 60px 0 40px; }
+      .hero-header { flex-direction: column; gap: 16px; }
+      .hero-logo { width: 140px; }
+      .section { padding: 52px 0; }
+      .form-section { padding: 28px 18px; }
+      .brands { grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 12px; }
+      .brand-card { padding: 18px 10px; min-height: 90px; }
+      .assistant-widget { bottom: 14px; right: 14px; }
+      .assistant-toggle { width: 58px; height: 58px; }
+      .assistant-chat { width: calc(100vw - 28px); right: 14px; bottom: 100px; height: 420px; }
+      .neighborhoods { gap: 8px; }
+      .neighborhood-tag { padding: 5px 12px; font-size: 0.78em; }
+      .submit-btn { padding: 14px 20px; }
+      input, select, textarea { font-size: 16px; }
+      .header-inner { padding: 12px 16px; }
+    }
+    @media (max-width: 420px) {
+      .hero h1 { font-size: 1.9em; }
+      .section-title { font-size: 1.5em; }
+      .form-section { padding: 20px 14px; }
+      .theme-toggle .label { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="header-left">
+        <div class="header-brand">⚡ VovôFixIt</div>
+      </div>
+      <div class="theme-toggle" id="themeToggle" title="Toggle light/dark mode">
+        <span class="icon" id="themeIcon">☀️</span>
+        <span class="label" id="themeLabel">LIGHT MODE</span>
+        <div class="toggle-track"><div class="toggle-thumb"></div></div>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-content flex">
+      <div class="container">
+        <div class="hero-header">
+          <div style="width:180px; height:180px; border-radius:50%; border:3px solid var(--cyan); box-shadow:0 0 40px rgba(0,212,255,0.35), 0 0 80px rgba(0,212,255,0.15); background:var(--surface); display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;">
+            <img src="VovoFixItAgent.png" alt="VOVOFIXIT Logo" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
+          </div>
+          <h1>VovôFixIt<br>Your Expert Appliance Repair</h1>
+        </div>
+        <p>High-Class Diagnostic Services | Schedule at Your Convenience</p>
+        <p>Professional repair services for GE, Whirlpool, Kenmore, Frigidaire, Maytag, Jenn-Air, Monogram, Café, Trane, Carrier, Lennox &amp; Goodman</p>
+        <p style="color: #FF6F00;"><strong>Note: Refrigerant Gas Recharging not available!</strong></p>
+        <div class="neighborhoods">
+          <div class="neighborhood-tag">Reunion Ranch</div>
+          <div class="neighborhood-tag">Belterra</div>
+          <div class="neighborhood-tag">Meridian</div>
+          <div class="neighborhood-tag">Parten</div>
+          <div class="neighborhood-tag">RimRock</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section with-background">
+    <div class="container">
+      <h2 class="section-title">Brands We Service</h2>
+      <div class="brands">
+        <div class="brand-card">
+          <img src="General_Electric_logo.png" alt="GE Appliances Logo" style="height:60px; max-width:100%;">
+        </div>
+        <div class="brand-card">
+          <img src="Whirlpool logo.png" alt="Whirlpool Logo" style="height:60px; max-width:100%; background:#fff;">
+        </div>
+        <div class="brand-card">
+          <img src="Kenmore logo.png" alt="Kenmore Logo" style="height:60px; max-width:100%;">
+        </div>
+        <div class="brand-card">
+          <img src="Frigidaire logo.png" alt="Frigidaire Logo" style="height:60px; max-width:100%;">
+        </div>
+        <div class="brand-card">
+          <img src="Maytag logo.png" alt="Maytag Logo" style="height:60px; max-width:100%;">
+        </div>
+        <div class="brand-card">
+          <img src="jenair logo.png" alt="Jenn-Air Logo" style="height:60px; max-width:100%; background:#fff;">
+        </div>
+        <div class="brand-card" style="grid-column-start: 1;">
+          <img src="MONOGRAM_LOGO.png" alt="Monogram Logo" style="height:60px; max-width:100%; background:#fff;">
+        </div>
+        <div class="brand-card">
+          <img src="cafe logo.png" alt="Café Logo" style="height:60px; max-width:100%; background:#fff;">
+        </div>
+        <div class="brand-card">
+          <img src="Trane-Logo.png" alt="Trane Logo" style="height:60px; max-width:100%; background:#fff;">
+        </div>
+        <div class="brand-card">
+          <img src="Carrier-Logo.png" alt="Carrier Logo" style="height:60px; max-width:100%; background:#fff;">
+        </div>
+        <div class="brand-card">
+          <img src="Lennox-Logo.png" alt="Lennox Logo" style="height:60px; max-width:100%; background:#fff;">
+        </div>
+        <div class="brand-card">
+          <img src="Goodman-Logo.png" alt="Goodman Logo" style="height:60px; max-width:100%; background:#fff;">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section with-background">
+    <div class="container">
+      <h2 class="section-title">Schedule Your Service</h2>
+      <div class="form-section">
+        <form id="serviceForm">
+
+          <div class="form-group">
+            <label>Appliance Type <span style="color: var(--accent);">*</span></label>
+            <select id="applianceType" name="applianceType" required="">
+              <option value="">Select appliance type</option>
+              <option value="refrigerator">Refrigerator</option>
+              <option value="washer">Washing Machine</option>
+              <option value="dryer">Dryer</option>
+              <option value="dishwasher">Dishwasher</option>
+              <option value="oven">Oven/Range</option>
+              <option value="microwave">Microwave</option>
+              <option value="Air Conditioner">Air Conditioner</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Brand <span style="color: var(--accent);">*</span></label>
+            <select id="brand" name="brand" required="">
+              <option value="">Select brand</option>
+              <option value="ge">GE</option>
+              <option value="whirlpool">Whirlpool</option>
+              <option value="kenmore">Kenmore</option>
+              <option value="frigidaire">Frigidaire</option>
+              <option value="maytag">Maytag</option>
+              <option value="jennair">Jenn-Air</option>
+              <option value="monogram">Monogram</option>
+              <option value="cafe">Café</option>
+              <option value="Trane">Trane</option>
+              <option value="Carrier">Carrier</option>
+              <option value="Lennox">Lennox</option>
+              <option value="Goodman">Goodman</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>What's the trouble with your appliance? <span style="color: var(--accent);">*</span></label>
+            <select id="issueType" name="issueType" required=""><option value="">Select...</option></select>
+          </div>
+
+          <div class="form-group">
+            <label>Model Number <span style="color: var(--accent);">*</span></label>
+            <input type="text" id="model" name="model" placeholder="e.g., WFE525S0HZ" required="">
+            <div class="info-box">
+              <strong>Where to find:</strong> Usually on a sticker inside the door, on the back panel, or inside the top/bottom rim of the appliance.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Serial Number <span style="color: var(--accent);">*</span></label>
+            <input type="text" id="serial" name="serial" placeholder="e.g., MK12345678" required="">
+            <div class="info-box">
+              <strong>Where to find:</strong> Located on the same sticker as the model number. It may be labeled as "S/N" or "Serial".
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Problem Description <span style="color: var(--accent);">*</span></label>
+            <textarea id="description" name="description" placeholder="Please describe the issue with a little more detail: What's not working? Any error codes? When did it start? (The more information you provide, the faster and more efficient will be our diagnostic process!)" required=""></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Your Name <span style="color: var(--accent);">*</span></label>
+            <input type="text" id="name" name="name" placeholder="Full name" required="">
+          </div>
+
+          <div class="form-group">
+            <label>Phone Number <span style="color: var(--accent);">*</span></label>
+            <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567" required="">
+          </div>
+
+          <div class="form-group">
+            <label>Email <span style="color: var(--accent);">*</span></label>
+            <input type="email" id="email" name="email" placeholder="your.email@example.com" required="">
+          </div>
+
+          <div class="form-group">
+            <label>Service Address <span style="color: var(--accent);">*</span></label>
+            <input type="text" id="address" name="address" placeholder="Street address" required="">
+          </div>
+
+          <div class="form-group">
+            <label>Neighborhood <span style="color: var(--accent);">*</span></label>
+            <select id="neighborhood" name="neighborhood" required="">
+              <option value="">Select your neighborhood (Required)</option>
+              <option value="Reunion Ranch">Reunion Ranch</option>
+              <option value="Belterra">Belterra</option>
+              <option value="Meridian">Meridian</option>
+              <option value="Parten">Parten</option>
+              <option value="RimRock">RimRock</option>
+            </select>
+            <div class="info-box">
+              <strong>Important:</strong> At this point in time, we only serve these 5 neighborhoods in South Austin. Your address must be located in one of these areas.
+            </div>
+          </div>
+
+          <!-- ─── CALENDLY DATE & TIME PICKER ─── -->
+          <div class="form-group">
+            <label>Select Date &amp; Time for your Diagnostic Visit <span style="color: var(--accent);">*</span></label>
+
+            <div class="calendly-confirmed-box" id="calendlyConfirmedBox">
+              <span class="check-icon">✅</span>
+              <div>
+                <strong>Appointment selected:</strong><br>
+                <span id="calendlyDatetimeDisplay"></span>
+              </div>
+            </div>
+
+            <div class="calendly-wrapper">
+              <iframe id="calendlyFrame" src="https://calendly.com/vovofixit-vovofixit/60min?hide_gdpr_banner=1&amp;hide_event_type_details=1&amp;background_color=E3F2FD&amp;primary_color=4FC3F7" width="100%" height="660" frameborder="0" title="Schedule your appointment" style="display:block; border-radius:10px;">
+              </iframe>
+            </div>
+
+            <input type="hidden" id="calendly_date" name="date">
+            <input type="hidden" id="calendly_time" name="time">
+            <input type="hidden" id="calendly_event_uri" name="calendly_event_uri">
+
+            <div class="info-box" style="margin-top:12px;">
+              <strong style="color:#00E676;">✅ Step 1 of 2:</strong> Use the calendar above to pick your date and time. Calendly will send you a confirmation email once booked.
+            </div>
+          </div>
+          <!-- ─── END CALENDLY ─── -->
+
+          <div class="cost-info">
+            <h3>Service Visit: $100</h3>
+            <p>This diagnostic visit fee will be deducted from your total service cost if you approve the repair quote.</p>
+          </div>
+
+          <div style="background:rgba(0,230,118,0.08); border:1px solid rgba(0,230,118,0.35); border-radius:14px; padding:20px; margin-bottom:20px; text-align:center;">
+            <p style="margin:0 0 6px; font-size:1.05em; font-weight:700; color:#00E676;">
+              ✅ Step 2 of 2 — Send your appliance details
+            </p>
+            <p style="margin:0; font-size:0.88em; color:var(--text-dim);">
+              Once you have booked your Calendly appointment above, click the button below to send us your appliance information.
+            </p>
+          </div>
+
+          <button type="submit" class="submit-btn" id="submitBtn">
+            📋 Send Your Appliance Details to VovôFixIt
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>© 2025 VOVOFIXIT. Expert Appliance Repair - Austin, TX South Region</p>
+    </div>
+  </footer>
+
+  <!-- Chatbot Widget -->
+  <div class="assistant-widget">
+    <button class="assistant-toggle" id="assistantToggle" type="button">
+      <img src="bot-avatar.png" alt="VOVOFIXIT Assistant" style="width: 112px; height: 112px; border-radius: 500%;">
+    </button>
+    <div class="assistant-label">Need help?</div>
+    <div class="assistant-chat" id="assistantChat" style="display: none;">
+      <div class="chat-header">VOVOFIXIT Assistant</div>
+      <div class="chat-messages" id="chatMessages">
+        <div class="message bot">
+          Hi! I'm here to help you schedule your appliance repair. How can I assist?
+        </div>
+      </div>
+      <div class="chat-input-area">
+        <input type="text" class="chat-input" id="chatInput" placeholder="Type your question..." autocomplete="off">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ─── APPLIANCE ISSUES DATA ────────────────────────────────────────────────
+    const applianceIssues = {
+      refrigerator: [
+        { value: "2018-haier-america-top-mount-recall", text: "2018 Haier America Top Mount Recall" },
+        { value: "basket-bins-shelves", text: "Basket/Bins/Shelves" },
+        { value: "damaged-missing-part", text: "Damaged / Missing Part" },
+        { value: "dents-in-outer-case", text: "Dents in Outer Case" },
+        { value: "does-not-run-at-all", text: "Does not Run at All" },
+        { value: "door-handle-issues", text: "Door / Handle issues" },
+        { value: "icemaker-dispenser-issues", text: "Icemaker / Dispenser issues" },
+        { value: "leaking-sweating-condensation-frost", text: "Leaking / Sweating / Condensation / Frost" },
+        { value: "missing-or-replace-parts", text: "Missing or Replace Parts" },
+        { value: "noisy-operation", text: "Noisy Operation" },
+        { value: "not-cooling-no-cool", text: "Not Cooling / No Cool" },
+        { value: "odor", text: "Odor" },
+        { value: "other-not-listed", text: "Other Not Listed" },
+        { value: "outer-case-hot-to-touch", text: "Outer Case Hot to Touch" },
+        { value: "red-glow", text: "Red Glow" },
+        { value: "runs-too-often", text: "Runs Too Often" },
+        { value: "too-cold", text: "Too Cold" }
+      ],
+      washer: [
+        { value: "does-not-run-at-all", text: "Does not Run at All" },
+        { value: "leaking-water", text: "Leaking Water" },
+        { value: "noisy-operation", text: "Noisy Operation" },
+        { value: "not-draining", text: "Not Draining" },
+        { value: "not-filling-with-water", text: "Not Filling with Water" },
+        { value: "not-spinning", text: "Not Spinning" },
+        { value: "odor", text: "Odor" },
+        { value: "other-not-listed", text: "Other Not Listed" }
+      ],
+      dryer: [
+        { value: "dryer-not-heating", text: "Dryer not heating" },
+        { value: "dryer-not-starting", text: "Dryer not starting" },
+        { value: "clothes-not-drying-properly", text: "Clothes not drying properly" },
+        { value: "dryer-not-tumbling", text: "Dryer not tumbling" },
+        { value: "dryer-overheating", text: "Dryer overheating" },
+        { value: "loud-noises-of-vibration", text: "Loud noises of vibration" },
+        { value: "dryers-shuts-off-mid-cycle", text: "Dryer shuts off mid cycle" },
+        { value: "dryer-producing-burning-smell", text: "Dryer producing burning smell" },
+        { value: "error-codes-or-unresponsive-controls", text: "Error codes or unresponsive controls" },
+        { value: "clothes-taking-too-long-to-dry", text: "Clothes taking too long to dry" },
+        { value: "other-not-listed", text: "Other Not Listed" }
+      ],
+      dishwasher: [
+        { value: "does-not-run-at-all", text: "Does not Run at All" },
+        { value: "leaking-water", text: "Leaking Water" },
+        { value: "noisy-operation", text: "Noisy Operation" },
+        { value: "not-cleaning-dishes-properly", text: "Not Cleaning Dishes Properly" },
+        { value: "not-draining", text: "Not Draining" },
+        { value: "not-filling-with-water", text: "Not Filling with Water" },
+        { value: "odor", text: "Odor" },
+        { value: "other-not-listed", text: "Other Not Listed" }
+      ],
+      oven: [
+        { value: "does-not-run-at-all", text: "Does not Run at All" },
+        { value: "not-heating-properly", text: "Not Heating Properly" },
+        { value: "noisy-operation", text: "Noisy Operation" },
+        { value: "door-issues", text: "Door Issues" },
+        { value: "error-codes", text: "Error Codes" },
+        { value: "self-cleaning-not-working", text: "Self-Cleaning Not Working" },
+        { value: "other-not-listed", text: "Other Not Listed" }
+      ],
+      microwave: [
+        { value: "microwave-not-heating", text: "Microwave not heating" },
+        { value: "microwave-not-working-at-all", text: "Microwave not working at all" },
+        { value: "microwave-light-bulb-not-working", text: "Microwave light bulb not working" },
+        { value: "microwave-shuts-off-after-a-few-seconds", text: "Microwave shuts off after a few seconds" },
+        { value: "microwave-turntable-not-turning", text: "Microwave turntable not turning" },
+        { value: "microwave-buttons-not-working", text: "Microwave buttons not working" },
+        { value: "microwave-display-not-working", text: "Microwave display not working" },
+        { value: "microwave-turns-on-by-itself", text: "Microwave turns on by itself" },
+        { value: "microwave-is-sparking-or-arcing", text: "Microwave is sparking or arcing" },
+        { value: "microwave-door-not-opening-closing-properly", text: "Microwave door not opening/closing properly" },
+        { value: "microwave-exhaust-fan-not-working", text: "Microwave exhaust fan not working" },
+        { value: "microwave-is-loud-or-noisy", text: "Microwave is loud or noisy" },
+        { value: "microwave-is-tripping-circuit-breaker", text: "Microwave is tripping circuit breaker" },
+        { value: "microwave-is-producing-a-burning-smell", text: "Microwave is producing a burning smell" },
+        { value: "microwave-is-not-turning-off", text: "Microwave is not turning off" },
+        { value: "other-not-listed", text: "Other Not Listed" }
+      ],
+      "Air Conditioner": [
+        { value: "ac-not-cooling", text: "AC not cooling / Blowing warm air" },
+        { value: "ac-not-turning-on", text: "AC not turning on" },
+        { value: "ac-not-turning-off", text: "AC not turning off" },
+        { value: "ac-weak-airflow", text: "Weak or reduced airflow" },
+        { value: "ac-leaking-water", text: "Leaking water / Condensation drain issue" },
+        { value: "ac-refrigerant-leak", text: "Refrigerant leak / Ice buildup on unit" },
+        { value: "ac-noisy-operation", text: "Loud or unusual noises" },
+        { value: "ac-bad-odor", text: "Bad or musty odor coming from unit" },
+        { value: "ac-short-cycling", text: "Short cycling (turns on and off frequently)" },
+        { value: "ac-thermostat-not-working", text: "Thermostat not responding or reading incorrectly" },
+        { value: "ac-high-humidity", text: "High indoor humidity / Not dehumidifying" },
+        { value: "ac-tripping-circuit-breaker", text: "Tripping circuit breaker" },
+        { value: "ac-error-codes", text: "Error codes on display" },
+        { value: "ac-fan-not-working", text: "Fan not working (indoor or outdoor unit)" },
+        { value: "ac-frozen-coils", text: "Frozen evaporator coils" },
+        { value: "ac-compressor-issues", text: "Compressor not running or making noise" },
+        { value: "ac-uneven-cooling", text: "Uneven cooling across rooms" },
+        { value: "other-not-listed", text: "Other Not Listed" }
+      ]
+    };
+
+    // ─── DYNAMIC ISSUE DROPDOWN ───────────────────────────────────────────────
+    const applianceTypeSelect = document.getElementById('applianceType');
+    const issueTypeSelect = document.getElementById('issueType');
+    applianceTypeSelect.addEventListener('change', function () {
+      const selected = this.value;
+      issueTypeSelect.innerHTML = '<option value="">Select...</option>';
+      if (selected && applianceIssues[selected]) {
+        applianceIssues[selected].forEach(issue => {
+          const option = document.createElement('option');
+          option.value = issue.value;
+          option.textContent = issue.text;
+          issueTypeSelect.appendChild(option);
+        });
+      }
+    });
+
+    // ─── CALENDLY EVENT LISTENER ──────────────────────────────────────────────
+    window.addEventListener('message', function (e) {
+      if (e.origin !== 'https://calendly.com') return;
+      const data = e.data;
+      const isScheduled =
+        (data && data.event === 'calendly.event_scheduled') ||
+        (data && data.type  === 'calendly.event_scheduled');
+      if (!isScheduled) return;
+      const payload   = data.payload || data;
+      const startTime = (payload.event && payload.event.start_time) || payload.start_time;
+      const eventUri  = (payload.event && payload.event.uri) || payload.uri || '';
+      if (!startTime) return;
+      const eventDate = new Date(startTime);
+      const dateStr = eventDate.toLocaleDateString('en-US', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+        timeZone: 'America/Chicago'
+      });
+      const timeStr = eventDate.toLocaleTimeString('en-US', {
+        hour: '2-digit', minute: '2-digit',
+        timeZone: 'America/Chicago'
+      });
+      document.getElementById('calendly_date').value      = dateStr;
+      document.getElementById('calendly_time').value      = timeStr;
+      document.getElementById('calendly_event_uri').value = eventUri;
+      document.getElementById('calendlyDatetimeDisplay').textContent = dateStr + ' at ' + timeStr + ' (CT)';
+      const box = document.getElementById('calendlyConfirmedBox');
+      box.classList.add('visible');
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.textContent = '✅ Calendly Confirmed — Click Here to Send Your Details';
+      submitBtn.style.background = 'linear-gradient(135deg, #43A047, #66BB6A)';
+      document.getElementById('submit-reminder').classList.add('show');
+    });
+
+    // ─── FORM SUBMIT ──────────────────────────────────────────────────────────
+    document.getElementById('serviceForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const applianceType = document.getElementById('applianceType').value.trim();
+      const brand         = document.getElementById('brand').value.trim();
+      const issueType     = document.getElementById('issueType').value.trim();
+      const model         = document.getElementById('model').value.trim();
+      const serial        = document.getElementById('serial').value.trim();
+      const description   = document.getElementById('description').value.trim();
+      const name          = document.getElementById('name').value.trim();
+      const phone         = document.getElementById('phone').value.trim();
+      const email         = document.getElementById('email').value.trim();
+      const address       = document.getElementById('address').value.trim();
+      const neighborhood  = document.getElementById('neighborhood').value.trim();
+      const calendlyDate  = document.getElementById('calendly_date').value.trim() || '(see your Calendly confirmation email)';
+      const calendlyTime  = document.getElementById('calendly_time').value.trim() || '';
+      const eventUri      = document.getElementById('calendly_event_uri').value.trim();
+
+      const fieldLabels = {
+        applianceType: 'Appliance Type', brand: 'Brand',
+        issueType: 'Issue Type', model: 'Model Number',
+        serial: 'Serial Number', description: 'Problem Description',
+        name: 'Your Name', phone: 'Phone Number',
+        email: 'Email', address: 'Service Address',
+        neighborhood: 'Neighborhood'
+      };
+      const fieldValues = { applianceType, brand, issueType, model, serial, description, name, phone, email, address, neighborhood };
+      const missing = Object.keys(fieldValues).filter(f => !fieldValues[f]);
+      if (missing.length > 0) {
+        alert('Please fill in all required fields:\n\n• ' + missing.map(f => fieldLabels[f]).join('\n• '));
+        document.getElementById('serviceForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+
+      const payload = {
+        subject:       'Repair Request: ' + applianceType + ' (' + brand + ') — ' + neighborhood,
+        reply_to:      email,
+        from_name:     name,
+        date:          calendlyDate,
+        time:          calendlyTime,
+        name:          name,
+        phone:         phone,
+        email:         email,
+        address:       address,
+        neighborhood:  neighborhood,
+        applianceType: applianceType,
+        brand:         brand,
+        issueType:     issueType,
+        model:         model,
+        serial:        serial,
+        description:   description
+      };
+
+      console.log('=== VovôFixIt — EmailJS payload ===', payload);
+
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled    = true;
+      submitBtn.textContent = 'Sending your details…';
+
+      if (!navigator.onLine) {
+        saveToOfflineQueue(payload);
+        alert('📵 You are offline. Your details have been saved and will be sent when you reconnect.');
+        submitBtn.disabled    = false;
+        submitBtn.textContent = 'Send My Appliance Details';
+        return;
+      }
+
+      emailjs.send('service_6446jtk', 'template_9wm39xr', payload)
+        .then(function () {
+          const box = document.getElementById('calendlyConfirmedBox');
+          box.innerHTML =
+            '<span class="check-icon">✅</span>' +
+            '<div><strong>All done, ' + name + '!</strong><br>' +
+            'Appointment: ' + calendlyDate + ' at ' + calendlyTime + ' (CT)<br>' +
+            'Your appliance details have been sent to our team at vovofixit@vovofixit.com.<br>' +
+            'Check your email for the Calendly confirmation.</div>';
+          box.style.background = 'rgba(0,230,118,0.12)';
+          document.getElementById('serviceForm').reset();
+          document.getElementById('submit-reminder').classList.remove('show');
+          issueTypeSelect.innerHTML = '<option value="">Select...</option>';
+          document.getElementById('calendly_date').value      = '';
+          document.getElementById('calendly_time').value      = '';
+          document.getElementById('calendly_event_uri').value = '';
+          submitBtn.disabled        = false;
+          submitBtn.textContent     = '✅ Appliance Details Successfully Sent to VovôFixIt';
+          submitBtn.style.background = 'linear-gradient(135deg, #43A047, #66BB6A)';
+          setTimeout(function () {
+            submitBtn.textContent      = '📋 Send Your Appliance Details to VovôFixIt';
+            submitBtn.style.background = '';
+          }, 5000);
+        })
+        .catch(function (err) {
+          console.error('EmailJS error:', err);
+          submitBtn.disabled    = false;
+          submitBtn.textContent = '⚠️ Retry — Click to Resend';
+          submitBtn.style.background = 'linear-gradient(135deg, #e53935, #ef9a9a)';
+          alert(
+            '⚠️ There was a problem sending your details (your Calendly appointment is still confirmed).\n\n' +
+            'Please click the red "Retry" button, or email us directly at vovofixit@vovofixit.com\n\n' +
+            'Error: ' + (err.text || JSON.stringify(err))
+          );
+        });
+    });
+
+    // ─── CHATBOT ──────────────────────────────────────────────────────────────
+    const assistantToggle = document.getElementById('assistantToggle');
+    const assistantChat  = document.getElementById('assistantChat');
+    const chatMessages   = document.getElementById('chatMessages');
+    const chatInput      = document.getElementById('chatInput');
+    assistantChat.style.display = 'none';
+    assistantToggle.addEventListener('click', () => {
+      const isOpen = assistantChat.style.display !== 'none';
+      assistantChat.style.display = isOpen ? 'none' : 'flex';
+    });
+    chatInput.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter' && chatInput.value.trim()) {
+        addMessage(chatInput.value.trim(), 'user');
+        respondToUser(chatInput.value.trim());
+        chatInput.value = '';
+      }
+    });
+    function addMessage(text, sender) {
+      const msg = document.createElement('div');
+      msg.className = 'message ' + sender;
+      msg.textContent = text;
+      chatMessages.appendChild(msg);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    function respondToUser(userMessage) {
+      const lowerMsg = userMessage.toLowerCase();
+      let response = '';
+      if (lowerMsg.includes('model') || lowerMsg.includes('serial')) {
+        response = "Look for a sticker inside your appliance door or on the back. Both model and serial numbers should be listed there.";
+      } else if (lowerMsg.includes('cost') || lowerMsg.includes('fee') || lowerMsg.includes('price') || lowerMsg.includes('charge')) {
+        response = "Our diagnostic visit fee is $100, which is deducted from your total if you approve the repair.";
+      } else if (lowerMsg.includes('schedule') || lowerMsg.includes('appointment') || lowerMsg.includes('book')) {
+        response = "Use the calendar on the page to pick a date and time that works for you — it's live and shows real availability!";
+      } else if (lowerMsg.includes('brand')) {
+        response = "We service GE, Whirlpool, Kenmore, Frigidaire, Maytag, Jenn-Air, Monogram, Café, Trane, Carrier, Lennox, and Goodman.";
+      } else if (lowerMsg.includes('area') || lowerMsg.includes('location') || lowerMsg.includes('neighborhood') || lowerMsg.includes('zip')) {
+        response = "We currently serve Reunion Ranch, Belterra, Meridian, Parten, and RimRock in South Austin.";
+      } else if (lowerMsg.includes('phone') || lowerMsg.includes('call') || lowerMsg.includes('contact') || lowerMsg.includes('number')) {
+        response = "The easiest way to reach us is by booking directly through the form on this page. We'll follow up by phone to confirm your visit!";
+      } else if (lowerMsg.includes('today') || lowerMsg.includes('same day') || lowerMsg.includes('urgent')) {
+        response = "Check the live calendar on this page — if today has an open slot, you're welcome to book it!";
+      } else if (lowerMsg.includes('cancel') || lowerMsg.includes('reschedule')) {
+        response = "You can reschedule or cancel using the link in the confirmation email you receive after booking.";
+      } else {
+        response = "I don't have an answer for that just yet! Please send your question to vovofixit@vovofixit.com and we'll get back to you as soon as possible. Make sure to include a clear description of your request so we can help you faster! 📧";
+      }
+      setTimeout(() => addMessage(response, 'bot'), 500);
+    }
+
+    // ─── THEME TOGGLE ─────────────────────────────────────────────────────────
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon   = document.getElementById('themeIcon');
+    const themeLabel  = document.getElementById('themeLabel');
+    if (localStorage.getItem('vovo_theme') === 'light') {
+      document.body.classList.add('light-mode');
+      themeIcon.textContent  = '🌙';
+      themeLabel.textContent = 'DARK MODE';
+    }
+    themeToggle.addEventListener('click', () => {
+      const isLight = document.body.classList.toggle('light-mode');
+      themeIcon.textContent  = isLight ? '🌙' : '☀️';
+      themeLabel.textContent = isLight ? 'DARK MODE' : 'LIGHT MODE';
+      localStorage.setItem('vovo_theme', isLight ? 'light' : 'dark');
+    });
+
+  </script>
+
+  <!-- ─── STICKY SUBMIT REMINDER ─── -->
+  <div id="submit-reminder">
+    <p>✅ Calendly appointment confirmed! One last step — send us your appliance details.</p>
+    <button onclick="document.getElementById('submitBtn').scrollIntoView({behavior:'smooth',block:'center'});this.closest('#submit-reminder').classList.remove('show');">
+      Complete Booking →
+    </button>
+  </div>
+
+  <!-- ─── OFFLINE NOTICE ─── -->
+  <div id="offline-notice">⚠️ You are offline. Your form data is saved and will be submitted when you reconnect.</div>
+
+  <!-- ─── PWA INSTALL BANNER ─── -->
+  <div id="pwa-install-banner">
+    <p>📲 Add VovôFixIt to your home screen for quick access!</p>
+    <div class="banner-btns">
+      <button id="pwa-install-btn">Install</button>
+      <button id="pwa-dismiss-btn">Not now</button>
+    </div>
+  </div>
+
+  <script>
+    // ─── SERVICE WORKER ───────────────────────────────────────────────────────
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('SW registered:', reg.scope))
+          .catch(err => console.log('SW registration failed:', err));
+      });
+    }
+
+    // ─── OFFLINE QUEUE ────────────────────────────────────────────────────────
+    const OFFLINE_KEY = 'vovofixit_offline_submission';
+    function saveToOfflineQueue(data) {
+      sessionStorage.setItem(OFFLINE_KEY, JSON.stringify(data));
+    }
+    function flushOfflineQueue() {
+      const saved = sessionStorage.getItem(OFFLINE_KEY);
+      if (!saved) return;
+      const data = JSON.parse(saved);
+      emailjs.send('service_6446jtk', 'template_9wm39xr', data)
+        .then(() => {
+          sessionStorage.removeItem(OFFLINE_KEY);
+          alert('✅ Your previously saved appointment request has now been sent successfully!');
+        })
+        .catch(err => console.warn('Flush failed, will retry next time online:', err));
+    }
+
+    // ─── ONLINE/OFFLINE DETECTION ─────────────────────────────────────────────
+    const offlineNotice = document.getElementById('offline-notice');
+    function updateOnlineStatus() {
+      if (!navigator.onLine) {
+        offlineNotice.classList.add('show');
+        document.body.classList.add('offline-mode');
+      } else {
+        offlineNotice.classList.remove('show');
+        document.body.classList.remove('offline-mode');
+        flushOfflineQueue();
+      }
+    }
+    window.addEventListener('online',  updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    updateOnlineStatus();
+
+    // ─── PWA INSTALL PROMPT ───────────────────────────────────────────────────
+    let deferredPrompt = null;
+    const installBanner = document.getElementById('pwa-install-banner');
+    const installBtn    = document.getElementById('pwa-install-btn');
+    const dismissBtn    = document.getElementById('pwa-dismiss-btn');
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      if (!sessionStorage.getItem('pwa_dismissed')) {
+        installBanner.classList.add('show');
+      }
+    });
+    installBtn.addEventListener('click', async () => {
+      installBanner.classList.remove('show');
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log('PWA install outcome:', outcome);
+        deferredPrompt = null;
+      }
+    });
+    dismissBtn.addEventListener('click', () => {
+      installBanner.classList.remove('show');
+      sessionStorage.setItem('pwa_dismissed', '1');
+    });
+    window.addEventListener('appinstalled', () => {
+      installBanner.classList.remove('show');
+      deferredPrompt = null;
+    });
+  </script>
+</body></html>
