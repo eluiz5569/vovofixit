@@ -1,0 +1,13 @@
+{
+	"id": "uam",
+	"version": "1.0.120",
+	"manifest": {
+		"integrationType": "js-object",
+		"js": ["main.bundle.js"],
+		"css": ["main.css"],
+		"fallback": true,
+		"uiTypes": {
+			"in-place": {}
+		}
+	}
+}
