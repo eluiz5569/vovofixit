@@ -824,14 +824,33 @@
               </iframe>
             </div>
 
-            <input type="hidden" id="calendly_date" name="date">
-            <input type="hidden" id="calendly_time" name="time">
             <input type="hidden" id="calendly_event_uri" name="calendly_event_uri">
 
             <div class="info-box" style="margin-top:12px;">
               <strong style="color:#00E676;">✅ Step 1 of 2:</strong> Use the calendar above to pick your date and time. Calendly will send you a confirmation email once booked.
             </div>
           </div>
+
+          <!-- ─── MANUAL DATE & TIME CONFIRMATION ─── -->
+          <div class="form-group">
+            <label>Confirm Your Appointment Date <span style="color: var(--accent);">*</span></label>
+            <input type="date" id="calendly_date" name="date"
+              style="cursor:pointer;"
+              min="">
+            <div class="info-box">
+              <strong>Enter the date</strong> you just selected in the Calendly calendar above.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Confirm Your Appointment Time <span style="color: var(--accent);">*</span></label>
+            <input type="time" id="calendly_time" name="time"
+              style="cursor:pointer;">
+            <div class="info-box">
+              <strong>Enter the time</strong> you just selected in the Calendly calendar above.
+            </div>
+          </div>
+          <!-- ─── END DATE & TIME CONFIRMATION ─── -->
           <!-- ─── END CALENDLY ─── -->
 
           <div class="cost-info">
@@ -1013,19 +1032,21 @@
       const startTime = (payload.event && payload.event.start_time) || payload.start_time;
       const eventUri  = (payload.event && payload.event.uri) || payload.uri || '';
       if (!startTime) return;
+
       const eventDate = new Date(startTime);
-      const dateStr = eventDate.toLocaleDateString('en-US', {
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-        timeZone: 'America/Chicago'
-      });
-      const timeStr = eventDate.toLocaleTimeString('en-US', {
-        hour: '2-digit', minute: '2-digit',
-        timeZone: 'America/Chicago'
-      });
-      document.getElementById('calendly_date').value      = dateStr;
-      document.getElementById('calendly_time').value      = timeStr;
+
+      // Set date input in YYYY-MM-DD format (required by type="date")
+      const yyyy = eventDate.toLocaleDateString('en-CA', { timeZone: 'America/Chicago' }); // en-CA gives YYYY-MM-DD
+      const hh   = eventDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'America/Chicago' });
+
+      document.getElementById('calendly_date').value      = yyyy;
+      document.getElementById('calendly_time').value      = hh.replace('24:', '00:'); // fix midnight edge case
       document.getElementById('calendly_event_uri').value = eventUri;
-      document.getElementById('calendlyDatetimeDisplay').textContent = dateStr + ' at ' + timeStr + ' (CT)';
+
+      // Show confirmation badge
+      const readableDate = eventDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/Chicago' });
+      const readableTime = eventDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Chicago' });
+      document.getElementById('calendlyDatetimeDisplay').textContent = readableDate + ' at ' + readableTime + ' (CT)';
       const box = document.getElementById('calendlyConfirmedBox');
       box.classList.add('visible');
       const submitBtn = document.getElementById('submitBtn');
@@ -1048,9 +1069,28 @@
       const email         = document.getElementById('email').value.trim();
       const address       = document.getElementById('address').value.trim();
       const neighborhood  = document.getElementById('neighborhood').value.trim();
-      const calendlyDate  = document.getElementById('calendly_date').value.trim() || '(see your Calendly confirmation email)';
-      const calendlyTime  = document.getElementById('calendly_time').value.trim() || '';
+      const calendlyDate  = document.getElementById('calendly_date').value.trim();
+      const calendlyTime  = document.getElementById('calendly_time').value.trim();
       const eventUri      = document.getElementById('calendly_event_uri').value.trim();
+
+      // Format date nicely for email: 2026-04-15 → Wednesday, April 15, 2026
+      let dateFormatted = calendlyDate;
+      if (calendlyDate) {
+        const d = new Date(calendlyDate + 'T12:00:00'); // noon to avoid timezone shift
+        dateFormatted = d.toLocaleDateString('en-US', {
+          weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        });
+      }
+
+      // Format time nicely for email: 09:00 → 9:00 AM
+      let timeFormatted = calendlyTime;
+      if (calendlyTime) {
+        const [hours, minutes] = calendlyTime.split(':');
+        const h = parseInt(hours);
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const h12 = h % 12 || 12;
+        timeFormatted = h12 + ':' + minutes + ' ' + ampm + ' (CT)';
+      }
 
       const fieldLabels = {
         applianceType: 'Appliance Type', brand: 'Brand',
@@ -1058,9 +1098,14 @@
         serial: 'Serial Number', description: 'Problem Description',
         name: 'Your Name', phone: 'Phone Number',
         email: 'Email', address: 'Service Address',
-        neighborhood: 'Neighborhood'
+        neighborhood: 'Neighborhood',
+        calendlyDate: 'Appointment Date', calendlyTime: 'Appointment Time'
       };
-      const fieldValues = { applianceType, brand, issueType, model, serial, description, name, phone, email, address, neighborhood };
+      const fieldValues = {
+        applianceType, brand, issueType, model, serial,
+        description, name, phone, email, address, neighborhood,
+        calendlyDate, calendlyTime
+      };
       const missing = Object.keys(fieldValues).filter(f => !fieldValues[f]);
       if (missing.length > 0) {
         alert('Please fill in all required fields:\n\n• ' + missing.map(f => fieldLabels[f]).join('\n• '));
@@ -1072,8 +1117,8 @@
         subject:       'Repair Request: ' + applianceType + ' (' + brand + ') — ' + neighborhood,
         reply_to:      email,
         from_name:     name,
-        date:          calendlyDate,
-        time:          calendlyTime,
+        date:          dateFormatted,
+        time:          timeFormatted,
         name:          name,
         phone:         phone,
         email:         email,
@@ -1107,7 +1152,7 @@
           box.innerHTML =
             '<span class="check-icon">✅</span>' +
             '<div><strong>All done, ' + name + '!</strong><br>' +
-            'Appointment: ' + calendlyDate + ' at ' + calendlyTime + ' (CT)<br>' +
+            'Appointment: ' + dateFormatted + ' at ' + timeFormatted + '<br>' +
             'Your appliance details have been sent to our team at vovofixit@vovofixit.com.<br>' +
             'Check your email for the Calendly confirmation.</div>';
           box.style.background = 'rgba(0,230,118,0.12)';
@@ -1186,6 +1231,9 @@
       }
       setTimeout(() => addMessage(response, 'bot'), 500);
     }
+
+    // ─── SET MIN DATE TO TODAY ────────────────────────────────────────────────
+    document.getElementById('calendly_date').min = new Date().toISOString().split('T')[0];
 
     // ─── THEME TOGGLE ─────────────────────────────────────────────────────────
     const themeToggle = document.getElementById('themeToggle');
